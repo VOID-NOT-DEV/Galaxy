@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Galaxy Gallery</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: black;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      color: white;
+    }
+
+    /* Bintang */
+    .stars, .stars2, .stars3 {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: transparent;
+      box-shadow: 
+        100px 200px white, 300px 600px white, 500px 100px white,
+        800px 400px white, 1200px 700px white, 900px 300px white,
+        1300px 500px white, 1500px 200px white, 1600px 800px white,
+        400px 900px white, 700px 1200px white, 1100px 1400px white;
+      animation: animStars 50s linear infinite;
+    }
+
+    .stars2 {
+      box-shadow: 
+        200px 100px white, 600px 300px white, 1000px 200px white,
+        1400px 600px white, 300px 1300px white, 800px 1600px white;
+      animation: animStars 100s linear infinite;
+    }
+
+    .stars3 {
+      box-shadow: 
+        150px 400px white, 500px 1200px white, 900px 1500px white,
+        1300px 1000px white, 1700px 500px white, 600px 1800px white;
+      animation: animStars 150s linear infinite;
+    }
+
+    @keyframes animStars {
+      from { transform: translateY(0px); }
+      to { transform: translateY(-2000px); }
+    }
+
+    /* Galeri */
+    .gallery {
+      display: flex;
+      gap: 15px;
+      z-index: 2;
+    }
+
+    .gallery img {
+      width: 200px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(255,255,255,0.8);
+    }
+
+    /* Modal zoom */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      padding-top: 60px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.9);
+    }
+
+    .modal-content {
+      margin: auto;
+      display: block;
+      max-width: 90%;
+      max-height: 80%;
+      border-radius: 10px;
+    }
+
+    .close {
+      position: absolute;
+      top: 20px;
+      right: 35px;
+      color: #fff;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <!-- Bintang -->
+  <div class="stars"></div>
+  <div class="stars2"></div>
+  <div class="stars3"></div>
+
+  <!-- Galeri -->
+  <div class="gallery">
+    <img src="https://drive.google.com/uc?export=download&id=1GEPMoHyQasry1qZLqGvLhDYN0vN8_3yp" alt="Foto 1">
+    <img src="https://drive.google.com/uc?export=download&id=1GD3aBxcckcf1Ge4ZUBVRhaoQB8OUDec9" alt="Foto 2">
+    <img src="https://drive.google.com/uc?export=download&id=1G32dyqsfcyep-jPE54JAFKMNzF8X7fqy" alt="Foto 3">
+    <img src="https://drive.google.com/uc?export=download&id=1FzYCPDXtcjFC3YxdwAId03qZzlasOxjs" alt="Foto 4">
+  </div>
+
+  <!-- Modal zoom -->
+  <div id="myModal" class="modal">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="imgZoom">
+  </div>
+
+  <!-- Musik -->
+  <audio id="bgMusic" autoplay loop>
+    <!-- Ganti link berikut dengan link Google Drive MP3 lagu Sempurna -->
+    <source src="https://drive.google.com/uc?export=download&id=GANTI_DENGAN_ID_FILE_MP3" type="audio/mpeg">
+    Browser kamu tidak mendukung audio.
+  </audio>
+
+  <script>
+    // Zoom foto
+    const modal = document.getElementById("myModal");
+    const modalImg = document.getElementById("imgZoom");
+    const closeBtn = document.getElementsByClassName("close")[0];
+
+    document.querySelectorAll(".gallery img").forEach(img => {
+      img.addEventListener("click", () => {
+        modal.style.display = "block";
+        modalImg.src = img.src;
+      });
+    });
+
+    closeBtn.onclick = function() {
+      modal.style.display = "none";
+    }
+
+    // Autoplay music (beberapa browser butuh interaksi user)
+    window.addEventListener('click', () => {
+      const music = document.getElementById("bgMusic");
+      if (music.paused) {
+        music.play().catch(() => {});
+      }
+    });
+  </script>
+</body>
+</html>
