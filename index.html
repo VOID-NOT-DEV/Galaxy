@@ -1,159 +1,102 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Galaxy Gallery</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galaxy Photo</title>
   <style>
     body {
       margin: 0;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: black;
       overflow: hidden;
-      font-family: Arial, sans-serif;
-      color: white;
+      background: black;
     }
 
-    /* Bintang */
-    .stars, .stars2, .stars3 {
-      position: absolute;
-      width: 2px;
-      height: 2px;
-      background: transparent;
-      box-shadow: 
-        100px 200px white, 300px 600px white, 500px 100px white,
-        800px 400px white, 1200px 700px white, 900px 300px white,
-        1300px 500px white, 1500px 200px white, 1600px 800px white,
-        400px 900px white, 700px 1200px white, 1100px 1400px white;
-      animation: animStars 50s linear infinite;
-    }
-
-    .stars2 {
-      box-shadow: 
-        200px 100px white, 600px 300px white, 1000px 200px white,
-        1400px 600px white, 300px 1300px white, 800px 1600px white;
-      animation: animStars 100s linear infinite;
-    }
-
-    .stars3 {
-      box-shadow: 
-        150px 400px white, 500px 1200px white, 900px 1500px white,
-        1300px 1000px white, 1700px 500px white, 600px 1800px white;
-      animation: animStars 150s linear infinite;
-    }
-
-    @keyframes animStars {
-      from { transform: translateY(0px); }
-      to { transform: translateY(-2000px); }
-    }
-
-    /* Galeri */
-    .gallery {
-      display: flex;
-      gap: 15px;
-      z-index: 2;
-    }
-
-    .gallery img {
-      width: 200px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    .gallery img:hover {
-      transform: scale(1.1);
-      box-shadow: 0 0 20px rgba(255,255,255,0.8);
-    }
-
-    /* Modal zoom */
-    .modal {
-      display: none;
+    #stars {
       position: fixed;
-      z-index: 10;
-      padding-top: 60px;
-      left: 0;
       top: 0;
+      left: 0;
+    }
+
+    .universe {
+      position: absolute;
       width: 100%;
       height: 100%;
-      background-color: rgba(0,0,0,0.9);
+      pointer-events: none; /* biar klik cuma di planet */
     }
 
-    .modal-content {
-      margin: auto;
-      display: block;
-      max-width: 90%;
-      max-height: 80%;
-      border-radius: 10px;
-    }
-
-    .close {
+    .planet {
       position: absolute;
-      top: 20px;
-      right: 35px;
-      color: #fff;
-      font-size: 40px;
-      font-weight: bold;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
       cursor: pointer;
+      transition: transform 0.3s;
+      pointer-events: auto; /* aktifkan klik di planet */
     }
 
-    .close:hover {
-      color: #ccc;
+    .planet:hover {
+      transform: scale(1.5);
+      z-index: 10;
     }
   </style>
 </head>
 <body>
-  <!-- Bintang -->
-  <div class="stars"></div>
-  <div class="stars2"></div>
-  <div class="stars3"></div>
+  <canvas id="stars"></canvas>
 
-  <!-- Galeri -->
-<div class="gallery">
-  <img src="https://raw.githubusercontent.com/VOID-NOT-DEV/Foto/refs/heads/main/IMG-20250822-WA0013.jpg" alt="Foto 1">
-  <img src="https://raw.githubusercontent.com/VOID-NOT-DEV/Foto/refs/heads/main/Foto1.jpg" alt="Foto 2">
-  <img src="https://raw.githubusercontent.com/VOID-NOT-DEV/Foto/refs/heads/main/IMG-20250822-WA0018.jpg" alt="Foto 3">
-  <img src="https://raw.githubusercontent.com/VOID-NOT-DEV/Foto/refs/heads/main/IMG-20250822-WA0017.jpg" alt="Foto 4">
-</div>
-
-  <!-- Modal zoom -->
-  <div id="myModal" class="modal">
-    <span class="close">&times;</span>
-    <img class="modal-content" id="imgZoom">
+  <div class="universe">
+    <img src="https://raw.githubusercontent.com/VOID-NOT-DEV/Foto/refs/heads/main/IMG-20250822-WA0013.jpg" class="planet" style="top:20%; left:10%;">
+    <img src="https://raw.githubusercontent.com/VOID-NOT-DEV/Foto/refs/heads/main/Foto1.jpg" class="planet" style="top:50%; left:30%;">
+    <img src="https://raw.githubusercontent.com/VOID-NOT-DEV/Foto/refs/heads/main/IMG-20250822-WA0018.jpg" class="planet" style="top:70%; left:60%;">
+    <img src="https://raw.githubusercontent.com/VOID-NOT-DEV/Foto/refs/heads/main/IMG-20250822-WA0017.jpg" class="planet" style="top:30%; left:80%;">
   </div>
 
-  <!-- Musik -->
-  <audio id="bgMusic" autoplay loop>
-    <!-- Ganti link berikut dengan link Google Drive MP3 lagu Sempurna -->
-    <source src="https://drive.google.com/uc?export=download&id=GANTI_DENGAN_ID_FILE_MP3" type="audio/mpeg">
-    Browser kamu tidak mendukung audio.
-  </audio>
-
   <script>
-    // Zoom foto
-    const modal = document.getElementById("myModal");
-    const modalImg = document.getElementById("imgZoom");
-    const closeBtn = document.getElementsByClassName("close")[0];
+    // ======== Bintang bergerak ========
+    const canvas = document.getElementById("stars");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-    document.querySelectorAll(".gallery img").forEach(img => {
-      img.addEventListener("click", () => {
-        modal.style.display = "block";
-        modalImg.src = img.src;
+    let stars = [];
+    for (let i = 0; i < 300; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2,
+        speed: Math.random() * 0.7 + 0.2
       });
-    });
-
-    closeBtn.onclick = function() {
-      modal.style.display = "none";
     }
 
-    // Autoplay music (beberapa browser butuh interaksi user)
-    window.addEventListener('click', () => {
-      const music = document.getElementById("bgMusic");
-      if (music.paused) {
-        music.play().catch(() => {});
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "white";
+      stars.forEach(s => {
+        s.y += s.speed;
+        if (s.y > canvas.height) s.y = 0;
+        ctx.fillRect(s.x, s.y, s.size, s.size);
+      });
+      requestAnimationFrame(animateStars);
+    }
+
+    animateStars();
+
+    // ======== Planet bergerak acak ========
+    const planets = document.querySelectorAll(".planet");
+
+    planets.forEach(planet => {
+      let angle = Math.random() * 360;
+      let radius = Math.random() * 150 + 100;
+      let centerX = window.innerWidth / 2;
+      let centerY = window.innerHeight / 2;
+      let speed = (Math.random() * 0.002) + 0.001;
+
+      function move() {
+        planet.style.left = (centerX + Math.cos(angle) * radius) + "px";
+        planet.style.top = (centerY + Math.sin(angle) * radius) + "px";
+        angle += speed;
+        requestAnimationFrame(move);
       }
+      move();
     });
   </script>
 </body>
